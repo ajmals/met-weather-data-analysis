@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monsoon Shift Transition Matrix | Maldives Weather Dynamics</title>
+  <meta name="description" content="Interactive meteorological transition matrix displaying atmospheric pressure drops, wind streamline vectors, and Sankey ribbon flows during Maldivian monsoon transitions (Assidha & Halha).">
+  
+  <!-- Styling -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Plotly & D3 CDN -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="badge-row">
+      <span class="badge assidha">Assidha Onset (Iruvai &rarr; Hulhangu)</span>
+      <span class="badge halha">Halha Transition (Hulhangu &rarr; Iruvai)</span>
+      <span class="badge iruvai">Northeast Trade Winds</span>
+      <span class="badge hulhangu">Southwest Monsoon</span>
+    </div>
+    <h1>Monsoon Shift Transition Matrix</h1>
+    <p class="subtitle">
+      Analyzing historical prevailing wind reversals, atmospheric pressure drops ($\Delta P$), and rainfall surges across the 27 Maldivian Nakaiys.
+    </p>
+  </header>
+
+  <!-- Controls Bar -->
+  <section class="controls-bar">
+    <div class="tabs-group">
+      <button class="tab-btn active" id="tab-all" onclick="switchTab('all')">Full Annual Cycle (1-27 Nakaiys)</button>
+      <button class="tab-btn" id="tab-assidha" onclick="switchTab('assidha')">Assidha Onset (SW Transition)</button>
+      <button class="tab-btn" id="tab-halha" onclick="switchTab('halha')">Halha Onset (NE Transition)</button>
+    </div>
+
+    <div class="station-select-group">
+      <label for="station-select">Observation Station:</label>
+      <select id="station-select" onchange="onStationChange()">
+        <option value="hulhule" selected>Hulhule International Airport (Central)</option>
+        <option value="gan">Gan International Airport (Southern)</option>
+        <option value="hanimaadhoo">Hanimaadhoo Climate Station (Northern)</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Metric Overview Cards -->
+  <section class="metrics-grid">
+    <div class="metric-card assidha-card">
+      <div class="card-title">Assidha Onset Pressure Drop</div>
+      <div class="card-value" id="stat-assidha-press">-2.03 hPa</div>
+      <div class="card-sub">Drop from peak Iruvai to Burunu onset</div>
+    </div>
+
+    <div class="metric-card halha-card">
+      <div class="card-title">Halha Easterly Trade Onset</div>
+      <div class="card-value" id="stat-halha-shift">77.0%</div>
+      <div class="card-sub">Easterly wind frequency in Furahalha</div>
+    </div>
+
+    <div class="metric-card rain-card">
+      <div class="card-title">Peak Transition Rainfall</div>
+      <div class="card-value" id="stat-peak-rain">28.31 mm/d</div>
+      <div class="card-sub">90th percentile surge during Roanu/Mula</div>
+    </div>
+
+    <div class="metric-card pressure-card">
+      <div class="card-title">Hulhangu Westerly Dominance</div>
+      <div class="card-value" id="stat-hulhangu-shift">83.6%</div>
+      <div class="card-sub">Westerly gust sector in Kethi/Roanu</div>
+    </div>
+  </section>
+
+  <!-- Visuals Grid Layout -->
+  <main class="visuals-grid">
+    
+    <!-- 1. Interactive Sankey Ribbon Flow -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title" id="sankey-title">Monsoon Wind Direction Sankey Ribbon Flow Diagram</div>
+          <div class="chart-subtitle">Prevailing wind directional sector shifts across pre-transition, onset, and established monsoon phases</div>
+        </div>
+      </div>
+      <div id="sankey-chart" class="chart-container"></div>
+    </div>
+
+    <!-- 2. Two-Column Dual Chart Row -->
+    <div class="two-col-grid">
+      
+      <!-- Pressure & Rainfall Matrix Profile -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Atmospheric Pressure Drop vs Rainfall Intensity</div>
+            <div class="chart-subtitle">Pressure anomaly (hPa) & 90th percentile daily rainfall per Nakaiy</div>
+          </div>
+        </div>
+        <div id="pressure-chart" class="chart-container"></div>
+      </div>
+
+      <!-- Polar Streamline Vector Compass -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Radial Wind Streamline Vector Compass</div>
+            <div class="chart-subtitle">Polar vector field ($U, V$ components) and prevailing direction shift</div>
+          </div>
+        </div>
+        <div id="compass-chart" class="chart-container"></div>
+      </div>
+
+    </div>
+
+    <!-- 3. Detailed Data Table -->
+    <div class="chart-card table-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Nakaiy Meteorological Transition Data Table</div>
+          <div class="chart-subtitle">Complete sequence metrics across 27 Nakaiys</div>
+        </div>
+      </div>
+      <div style="overflow-x: auto;">
+        <table id="nakai-table">
+          <thead>
+            <tr>
+              <th>Index</th>
+              <th>Nakaiy Name</th>
+              <th>Monsoon Phase</th>
+              <th>Dates</th>
+              <th>Mean Pressure (hPa)</th>
+              <th>$\Delta P$ Drop (hPa)</th>
+              <th>Mean Rain (mm)</th>
+              <th>P90 Rain (mm)</th>
+              <th>Wind Speed (kts)</th>
+              <th>Dominant Wind Sector</th>
+              <th>Traditional Weather Lore</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Maldives Meteorological Service Data Analysis &bull; Monsoon Shift Transition Matrix &bull; Built with D3.js & Plotly.js</p>
+  </footer>
+
+  <!-- Script Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

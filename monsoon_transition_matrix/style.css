@@ -1,0 +1,307 @@
+/* Modern Web Guidance & Dark Glassmorphic Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+
+:root {
+  --bg-main: #0B0F19;
+  --bg-card: rgba(17, 24, 39, 0.75);
+  --bg-card-hover: rgba(31, 41, 55, 0.85);
+  --border-color: rgba(55, 65, 81, 0.6);
+  --border-highlight: rgba(245, 158, 11, 0.4);
+  
+  --text-main: #F9FAFB;
+  --text-muted: #9CA3AF;
+  --text-dim: #6B7280;
+
+  --accent-iruvai: #F59E0B;   /* Amber / Gold */
+  --accent-hulhangu: #06B6D4; /* Cyan / Teal */
+  --accent-assidha: #EF4444;  /* Red / Rose Onset */
+  --accent-halha: #10B981;    /* Emerald Onset */
+  --accent-rain: #38BDF8;     /* Sky Blue */
+
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 2rem;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.05) 0%, transparent 60%);
+  background-attachment: fixed;
+}
+
+/* Header Header Section */
+header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.badge-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(31, 41, 55, 0.8);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(8px);
+}
+
+.badge.assidha { color: var(--accent-assidha); border-color: rgba(239, 68, 68, 0.4); }
+.badge.halha { color: var(--accent-halha); border-color: rgba(16, 185, 129, 0.4); }
+.badge.iruvai { color: var(--accent-iruvai); border-color: rgba(245, 158, 11, 0.4); }
+.badge.hulhangu { color: var(--accent-hulhangu); border-color: rgba(6, 182, 212, 0.4); }
+
+h1 {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #FFFFFF 0%, #9CA3AF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+p.subtitle {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 800px;
+  margin: 0 auto 1.5rem auto;
+}
+
+/* Controls Bar */
+.controls-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tabs-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tab-btn {
+  background: rgba(31, 41, 55, 0.6);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.6rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.tab-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-main);
+  border-color: var(--border-highlight);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(6, 182, 212, 0.2) 100%);
+  color: #FFFFFF;
+  border-color: var(--accent-iruvai);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+
+.station-select-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+select {
+  background: rgba(17, 24, 39, 0.9);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 0.55rem 1rem;
+  border-radius: 0.5rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: var(--accent-hulhangu);
+}
+
+/* Metric Cards Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-highlight);
+}
+
+.metric-card .card-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.metric-card .card-value {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.metric-card .card-sub {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.metric-card.assidha-card .card-value { color: var(--accent-assidha); }
+.metric-card.halha-card .card-value { color: var(--accent-halha); }
+.metric-card.rain-card .card-value { color: var(--accent-rain); }
+.metric-card.pressure-card .card-value { color: var(--accent-iruvai); }
+
+/* Main Visuals Layout Grid */
+.visuals-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.chart-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.chart-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.chart-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.chart-container {
+  width: 100%;
+  min-height: 480px;
+}
+
+.two-col-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+  gap: 2rem;
+}
+
+/* Table Card */
+.table-card {
+  margin-top: 2rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+}
+
+th {
+  background: rgba(31, 41, 55, 0.8);
+  color: var(--text-muted);
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+}
+
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(55, 65, 81, 0.4);
+}
+
+tr:hover {
+  background: rgba(31, 41, 55, 0.4);
+}
+
+.highlight-assidha { background: rgba(239, 68, 68, 0.15) !important; font-weight: 600; }
+.highlight-halha { background: rgba(16, 185, 129, 0.15) !important; font-weight: 600; }
+
+footer {
+  margin-top: 3rem;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  body { padding: 1rem; }
+  h1 { font-size: 1.8rem; }
+  .two-col-grid { grid-template-columns: 1fr; }
+}
