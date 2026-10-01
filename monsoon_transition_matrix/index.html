@@ -47,7 +47,13 @@
     </div>
   </section>
 
-  <!-- Metric Overview Cards -->
+  <!-- Error Banner (hidden by default) -->
+  <div id="error-banner" style="display:none;background:#1f0a0a;border:1px solid #ef4444;color:#fca5a5;padding:1.2rem 2rem;margin:1rem 2rem;border-radius:10px;font-size:0.95rem;">
+    &#9888; <strong>Failed to load data:</strong> <span id="error-msg"></span><br>
+    <small style="color:#9ca3af;">Make sure <code>monsoon_transition_data.json</code> is in the same folder as this page and is served via HTTP (not file://).</small>
+  </div>
+
+
   <section class="metrics-grid">
     <div class="metric-card assidha-card">
       <div class="card-title">Assidha Onset Pressure Drop</div>

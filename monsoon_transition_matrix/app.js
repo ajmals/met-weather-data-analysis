@@ -25,12 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchData() {
   try {
     const res = await fetch('monsoon_transition_data.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
     let text = await res.text();
     text = text.replace(/:\s*NaN\b/g, ': null');
     transitionData = JSON.parse(text);
     renderDashboard();
   } catch (err) {
     console.error('Failed to load transition data:', err);
+    const banner = document.getElementById('error-banner');
+    const msg = document.getElementById('error-msg');
+    if (banner && msg) {
+      msg.textContent = err.message;
+      banner.style.display = 'block';
+    }
   }
 }
 
