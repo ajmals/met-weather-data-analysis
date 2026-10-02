@@ -1,108 +1,151 @@
 # 🇲🇻 Maldives Weather & Climate Analysis
 
-A comprehensive 50-year (1974–2025) empirical analysis of daily meteorological records from **five Maldives weather stations**, exploring long-term climate trends, monsoon dynamics, ENSO impacts, sea level rise, and traditional Nakaiy calendar patterns.
+A comprehensive 50-year (1974–2025) empirical analysis of daily meteorological records from **five Maldives weather observation stations**, investigating long-term climate trends, regional rainfall gradients, monsoon dynamics, ENSO impacts, sea level rise, and traditional Maldivian Nakaiy calendar patterns.
 
-> **🌐 Interactive Dashboard →** [Monsoon Shift Transition Matrix](./monsoon_transition_matrix/index.html)  
-> *(Open locally or deploy via GitHub Pages — no backend required)*
+[![Live Dashboard](https://img.shields.io/badge/Live%20Dashboard-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://ajmals.github.io/met-weather-data-analysis/monsoon_transition_matrix/)
+[![Python](https://img.shields.io/badge/Python-3.12%2B-brightgreen?style=for-the-badge&logo=python)](requirements.txt)
+[![Data Period](https://img.shields.io/badge/Data%20Period-1974--2025-orange?style=for-the-badge)](./data/)
+
+> **🌐 Live Interactive Visualization:**  
+> Explore the **[Monsoon Shift Transition Matrix Dashboard](https://ajmals.github.io/met-weather-data-analysis/monsoon_transition_matrix/)** hosted on GitHub Pages (runs 100% in your browser, no server required).
+
+---
+
+## ⚡ Quick Start
+
+All cleaned datasets (`data/`) and pre-computed dashboard payloads (`monsoon_transition_matrix/`) are already provided. You can run notebooks or start the web dashboard immediately.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/ajmals/met-weather-data-analysis.git
+cd met-weather-data-analysis
+
+# 2. Set up virtual environment and install dependencies
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# 3. Launch JupyterLab to inspect analysis notebooks
+jupyter lab
+```
+
+### To Launch the Interactive Dashboard Locally:
+```bash
+# From the project root:
+python3 -m http.server 8000
+```
+Open **[http://localhost:8000/monsoon_transition_matrix/](http://localhost:8000/monsoon_transition_matrix/)** in your browser.
 
 ---
 
 ## 📡 Stations Covered
 
-| Station | Region | Lat/Lon | Period |
-|---|---|---|---|
-| **Hanimaadhoo** | Far North | 6.76° N | 1991–2025 |
-| **Hulhule** | Central (Capital) | 4.19° N | 1974–2025 |
-| **Kadhdhoo** | Central-South | 1.86° N | 1991–2025 |
-| **Kaadedhdhoo** | South | 0.49° N | 1994–2025 |
-| **Gan** | Far South / Equatorial | 0.69° S | 1978–2025 |
+The dataset covers five primary meteorological observation stations maintained by the **Maldives Meteorological Service (MET)**, spanning an 800 km north-to-south latitudinal gradient from 7° N to 1° S (crossing the Equator):
+
+| Station | Region | Latitude | Period | Daily Records | Cleaned Dataset |
+|---|---|---|---|---|---|
+| **Hanimaadhoo** | Far North | 6.76° N | 1991–2025 | 12,449 | [`hanimaadhoo_cleaned_data.csv`](./data/hanimaadhoo_cleaned_data.csv) |
+| **Hulhule** | Central (Capital / Airport) | 4.19° N | 1974–2025 | 18,809 | [`hulhule_cleaned_data.csv`](./data/hulhule_cleaned_data.csv) |
+| **Kadhdhoo** | Central-South | 1.86° N | 1991–2025 | 12,449 | [`kadhdhoo_cleaned_data.csv`](./data/kadhdhoo_cleaned_data.csv) |
+| **Kaadedhdhoo** | South | 0.49° N | 1994–2025 | 11,353 | [`kaadedhdhoo_cleaned_data.csv`](./data/kaadedhdhoo_cleaned_data.csv) |
+| **Gan** | Far South / Equatorial | 0.69° S | 1978–2025 | 17,350 | [`gan_cleaned_data.csv`](./data/gan_cleaned_data.csv) |
 
 ---
 
-## 📓 Notebooks
+## 🔄 End-to-End Analysis Workflow
+
+The repository is structured into a modular four-stage analytical pipeline:
+
+```
+Raw MET Station Records (1974–2025)
+                │
+                ▼
+  [1] maldives_weather_data_quality.ipynb
+      • Systematic audit, typo corrections & outlier clipping
+      • Outputs: 5 cleaned CSVs in data/
+                │
+        ┌───────┴────────────────────────────────────────┐
+        ▼                                                ▼
+  [2] maldives_weather_exploration.ipynb        [3] maldives_climate_deepdive.ipynb
+      • Multi-station exploratory analysis          • 5 Core Climate Hypotheses (Q1–Q5)
+      • Latitudinal temperature correlation         • Sea level rise integration
+      • Hulhule seasonal decomposition              • Nakaiy calendar mapping
+      • 24-month SARIMAX forecasting                • Outputs: data/hulhule_nakai_mapped.csv
+                                                         │
+                                                         ▼
+                                            [4] monsoon_transition_matrix/
+                                                • data_processor.py ──► monsoon_transition_data.json
+                                                • create_transition_matrix.py ──► output/ (PNG & PDF)
+                                                • index.html (Interactive Dashboard)
+```
+
+> **Note:** All output files from each stage are already committed to the repository, so you can execute or modify any stage independently without running earlier stages first.
+
+---
+
+## 📓 Notebooks & Findings
 
 ### 1. [`maldives_weather_data_quality.ipynb`](./maldives_weather_data_quality.ipynb) — Data Cleaning Pipeline
-
-A systematic data quality audit and cleaning pipeline on the raw daily weather datasets from all five stations.
-
-**What it does:**
-- Loads raw CSV files, standardizes column names and ordering across stations
-- Detects and corrects data entry errors (e.g. `10117.0 hPa → 1011.7 hPa`, `1053.3 hPa → 1013.3 hPa`)
-- Converts meteorological shorthand (`TR` → `0.05 mm`, `NIL` → `0.0 mm`)
-- Clips humidity outliers (e.g. `195%` → `95%`, `102%` → `100%`)
-- Drops placeholder rows from Kadhdhoo (1990–1991 gap period)
-- Exports clean CSVs to `data/`
-
-**Output:** 5 cleaned station CSV files in [`data/`](./data/)
+Audits raw meteorological daily records across all five stations and builds reproducible cleaned datasets.
+- **Header standardization:** Resolves inconsistent column names and variable orders across stations.
+- **Entry error corrections:** Fixes transcription typos (e.g. pressure values of `10117.0 hPa → 1011.7 hPa`, `1053.3 hPa → 1013.3 hPa`).
+- **Meteorological notation conversion:** Converts trace precipitation (`TR → 0.05 mm`) and dry indicators (`NIL → 0.0 mm`).
+- **Physical boundary clipping:** Adjusts impossible humidity readings (e.g. `195% → 95%`, `102% → 100%`).
+- **Placeholder filtering:** Removes zero-filled and placeholder records from Kadhdhoo's 1990–1991 instrumentation gap.
 
 ---
 
 ### 2. [`maldives_weather_exploration.ipynb`](./maldives_weather_exploration.ipynb) — Climate Trends & Time Series
-
-Exploratory data analysis and time-series modeling across all five stations.
-
-**What it covers:**
-- 📈 **Annual temperature trends** — long-term warming signal across stations
-- 🌀 **Monsoon season analysis** — Northeast (Iruvai) vs Southwest (Hulhangu) wind speed and rainfall patterns
-- 🗺️ **Spatial correlation matrix** — latitudinal temperature divergence across the 800 km archipelago
-- 📉 **Seasonal decomposition** — trend, seasonal, and residual components of Hulhule monthly temperatures
-- 🧮 **Stationarity testing** — Augmented Dickey-Fuller (ADF) test
-- 🔮 **SARIMAX forecasting** — train/test split (2024–2025) and 24-month projection (2026–2027)
-
-**Key Finding:** A clear warming trend is visible in the long-term Hulhule temperature decomposition, with Southwest monsoon average wind speeds ~28% higher than the Northeast dry season.
+Performs multi-station exploratory data analysis and time-series modeling.
+- 📈 **Long-term warming signal:** Detects steady multidecadal upward trends in mean daily temperatures across all stations.
+- 🌀 **Monsoon dynamics:** Contrasts the Northeast (Iruvai) and Southwest (Hulhangu) monsoons; Hulhangu brings ~28% higher average wind speeds and higher rainfall variability.
+- 🗺️ **Spatial correlation:** Measures high cross-atoll temperature correlation despite the 800 km archipelago length.
+- 📉 **Seasonal decomposition:** Deconstructs 50 years of Hulhule monthly records into trend, cyclical seasonal, and residual components.
+- 🔮 **SARIMAX modeling:** Validates time-series models against a 2024–2025 test split and projects monthly temperatures through 2026–2027.
 
 ---
 
-### 3. [`maldives_climate_deepdive.ipynb`](./maldives_climate_deepdive.ipynb) — Deep Dive: 5 Core Climate Questions
-
-Comprehensive empirical investigation of five advanced climate hypotheses.
+### 3. [`maldives_climate_deepdive.ipynb`](./maldives_climate_deepdive.ipynb) — Five Core Climate Hypotheses
 
 #### Q1 — Regional Rainfall Gradient: Is the South rainier than the North?
-**Yes.** Empirical data from 1995–2024 across all stations confirms a strong latitudinal rainfall gradient:
-- South (Kaadedhdhoo): **2,212.7 mm/yr**
-- Central-South (Kadhdhoo): **2,222.7 mm/yr**
-- Central (Hulhule): **2,009.9 mm/yr**
-- North (Hanimaadhoo): **1,763.9 mm/yr**
+**Yes, unequivocally.** Analysis of 1995–2024 records proves a pronounced latitudinal rainfall gradient:
+- **Kaadedhdhoo (South):** 2,212.7 mm/yr
+- **Kadhdhoo (Central-South):** 2,222.7 mm/yr
+- **Hulhule (Central):** 2,009.9 mm/yr
+- **Hanimaadhoo (North):** 1,763.9 mm/yr
 
-The South receives **~450 mm/year (+25%) more rain** than the North, with **58% higher frequency** of extreme rain events.
+The South receives **~450 mm/year (+25%) more rain** than the North and experiences a **58% higher frequency** of extreme rain days ($\ge 50\text{ mm}$).
 
 #### Q2 — Nakaiy Transitions & Rainfall Peaks
-Tests the traditional Maldivian folklore hypothesis that *Nakaiy change* days (transition windows between the 27 traditional 13-day calendar sectors) bring more intense rainfall and storm activity. Empirically evaluates ±2 day transition windows vs. stable mid-Nakaiy days across all stations.
+Evaluates traditional Maldivian folklore that *Nakaiy change* days (the transition boundaries between the 27 traditional 13-day astronomical calendar periods) trigger stormy weather. Empirically compares $\pm 2$-day transition windows against stable mid-Nakaiy days.
 
 #### Q3 — ENSO Impact (El Niño vs. La Niña)
-Classifies historical years by NOAA ONI index into El Niño, La Niña, and Neutral phases. Analyses impacts on Hulhule temperature anomalies, extreme heat days (≥31.5°C), and seasonal rainfall totals.
+Categorizes historical years using NOAA's Oceanic Niño Index (ONI). Quantifies the impact of El Niño on extreme heat days ($\ge 31.5^\circ\text{C}$), temperature anomalies, and suppressed monsoonal rainfall.
 
 #### Q4 — Climate Change & Sea Level Rise
-Fits an OLS linear regression model to the 50-year temperature record (1975–2024). Integrates UHSLC/IPCC Indian Ocean sea level rise data (`maldives_sealevel_rise.csv`) to compute decadal warming rate (°C/decade) and Pearson correlation between temperature rise and sea level rise.
+Fits linear regression trends to 50 years of observations (1975–2024) and joins University of Hawaii Sea Level Center (UHSLC) / IPCC Indian Ocean tide records (`maldives_sealevel_rise.csv`) to compute decadal warming and seal-level rise correlation.
 
 #### Q5 — Tropical Night Acceleration & Heat Index
-Investigates whether nighttime minimum temperatures are warming faster than daytime maximums. Tracks **stifling tropical nights** (nights where min temp fails to drop below 27.0°C) and computes the NOAA Heat Index time series to quantify the felt-temperature surge beyond raw thermometer readings.
+Finds nighttime minimum temperatures are rising faster than daytime maximums, tracking the surge in **stifling tropical nights** (nights where min temperature does not drop below 27.0°C) and computing the NOAA Heat Index time series to evaluate human heat stress.
 
 ---
 
 ## 🌐 Interactive Dashboard — Monsoon Shift Transition Matrix
 
-An interactive web application visualizing atmospheric pressure drops (ΔP), prevailing wind directional reversals, and extreme rainfall surges during the Maldivian monsoon transitions (**Assidha** and **Halha**).
+An interactive client-side web application dedicated to analyzing atmospheric pressure drops ($\Delta P$), prevailing wind reversals, and extreme rainfall surges during the Maldivian monsoon transitions (**Assidha** and **Halha**).
 
-**📂 Location:** [`monsoon_transition_matrix/`](./monsoon_transition_matrix/)
+* **Detailed Docs:** [`monsoon_transition_matrix/README.md`](./monsoon_transition_matrix/README.md)
+* **Live Demo:** [https://ajmals.github.io/met-weather-data-analysis/monsoon_transition_matrix/](https://ajmals.github.io/met-weather-data-analysis/monsoon_transition_matrix/)
 
-**Features:**
-- 🌊 **Sankey ribbon flow diagram** — wind sector transitions across all 27 Nakaiys
-- 🧭 **Polar wind streamline compass** — U/V vector components during monsoon phases
-- 📉 **Pressure drop matrix profiles** — sea-level pressure change across Nakaiy transitions
+### Features:
+- 🌊 **Sankey Ribbon Diagram:** Interactive flow of directional shifts between wind sectors across consecutive Nakaiys.
+- 🧭 **Polar Streamline Compass:** Radial vector plots visualizing wind velocity and angle reversals.
+- 📉 **Dual-Axis Transition Profile:** Bar/line chart synchronizing pressure drop against 90th percentile rainfall surges.
+- 📑 **Publication Graphics & PDF Report:** Pre-rendered figures located in [`monsoon_transition_matrix/output/`](./monsoon_transition_matrix/output/).
 
-**🔬 Key Scientific Findings:**
-- **Assidha Transition (Iruvai → Hulhangu):** Pressure drops from 1011.32 hPa → 1009.29 hPa (max ΔP: **−2.03 hPa**), wind direction flips from 81.6% NE/E → 83.6% W/NW/SW, rainfall surges to 19.47 mm/day (p90)
-- **Halha Transition (Hulhangu → Iruvai):** Pressure recovers to 1011.25 hPa (+1.5 hPa), easterly trade winds re-establish at 77.0%, extreme rainfall peaks at 27.44 mm/day (p90) in Mula
-
-**To run locally:**
-```bash
-source .venv/bin/activate
-python -m http.server 8000
-# Open: http://localhost:8000/monsoon_transition_matrix/
-```
-
-**To deploy on GitHub Pages:** Commit all files in `monsoon_transition_matrix/` (including `monsoon_transition_data.json`) and enable GitHub Pages in repo settings. The app runs entirely in the browser — no backend required.
+### Key Scientific Transition Findings:
+- **Assidha Transition (Iruvai $\rightarrow$ Hulhangu Onset):** Sea-level pressure drops from **1011.32 hPa** (*Huvan*) to **1009.29 hPa** (*Burunu*), a transition drop of **−2.03 hPa**. Wind direction reverses from **81.6%** Easterly in *Hiyaviha* to **83.6%** Westerly in *Burunu*. 90th percentile rainfall surges to **19.47 mm/day**.
+- **Halha Transition (Hulhangu $\rightarrow$ Iruvai Onset):** Sea-level pressure recovers by **+1.5 hPa** to **1011.25 hPa** in *Furahalha*. Easterly trade winds establish at **77.0%** frequency, accompanied by heavy onset rainfall of **27.44 mm/day** (p90) in *Mula*.
 
 ---
 
@@ -110,53 +153,48 @@ python -m http.server 8000
 
 ```
 met-weather-analysis/
-├── data/                              # Cleaned station datasets
-│   ├── hulhule_cleaned_data.csv       # Capital station (1974–2025)
-│   ├── hanimaadhoo_cleaned_data.csv   # North (1991–2025)
-│   ├── kadhdhoo_cleaned_data.csv      # Central-South (1991–2025)
-│   ├── kaadedhdhoo_cleaned_data.csv   # South (1994–2025)
-│   ├── gan_cleaned_data.csv           # Far South / Equatorial (1978–2025)
-│   ├── hulhule_nakai_mapped.csv       # Hulhule with Nakaiy calendar mapping
-│   └── maldives_sealevel_rise.csv     # UHSLC Indian Ocean sea level data
+├── README.md                              # Main project documentation & guide
+├── requirements.txt                      # Python dependencies (pandas, matplotlib, statsmodels, etc.)
+├── mindblowing_weather_questions.md      # Advanced research hypotheses on archipelagic dynamics
 │
-├── monsoon_transition_matrix/         # Interactive web dashboard
-│   ├── index.html                     # Dashboard UI
-│   ├── app.js                         # Chart rendering (Plotly.js / D3.js)
-│   ├── style.css                      # Glassmorphism dark UI
-│   ├── monsoon_transition_data.json   # Pre-generated data payload
-│   ├── data_processor.py              # Python data engine & JSON exporter
-│   └── create_transition_matrix.py    # Static plot generator (PNG/PDF)
+├── data/                                  # Cleaned datasets and external benchmarks
+│   ├── hulhule_cleaned_data.csv           # Central/Capital station (1974–2025)
+│   ├── hanimaadhoo_cleaned_data.csv       # North station (1991–2025)
+│   ├── kadhdhoo_cleaned_data.csv          # Central-South station (1991–2025)
+│   ├── kaadedhdhoo_cleaned_data.csv       # South station (1994–2025)
+│   ├── gan_cleaned_data.csv               # Equatorial station (1978–2025)
+│   ├── hulhule_nakai_mapped.csv           # Hulhule daily data with 27-Nakaiy calendar mapping
+│   └── maldives_sealevel_rise.csv         # UHSLC/IPCC Indian Ocean sea level benchmark
 │
-├── maldives_weather_data_quality.ipynb   # Data cleaning pipeline
-├── maldives_weather_exploration.ipynb    # EDA & time series
-├── maldives_climate_deepdive.ipynb       # 5-question deep dive
-├── mindblowing_weather_questions.md      # Research hypotheses & ideas
-├── requirements.txt                      # Python dependencies
-└── .venv/                                # Local virtual environment (not tracked)
+├── monsoon_transition_matrix/             # Interactive dashboard & transition analysis module
+│   ├── README.md                          # Dedicated module documentation
+│   ├── index.html                         # Dashboard web app interface
+│   ├── style.css                          # Modern dark glassmorphism styling
+│   ├── app.js                             # Plotly.js / D3.js chart renderer
+│   ├── monsoon_transition_data.json       # Aggregated JSON payload consumed by app.js
+│   ├── data_processor.py                  # Python data pipeline to re-generate JSON
+│   ├── create_transition_matrix.py        # Python script to render static PNG & PDF figures
+│   └── output/                            # Generated publication figures
+│       ├── transition_sankey_flow.png
+│       ├── pressure_rainfall_transition_profile.png
+│       ├── wind_streamline_vectors.png
+│       └── monsoon_transition_summary_report.pdf
+│
+├── maldives_weather_data_quality.ipynb   # [Pipeline Step 1] Cleaning & auditing raw data
+├── maldives_weather_exploration.ipynb    # [Pipeline Step 2] Exploration, trends & SARIMAX
+└── maldives_climate_deepdive.ipynb       # [Pipeline Step 3] 5 research hypotheses & Nakaiy mapping
 ```
 
 ---
 
-## ⚙️ Setup
+## 📜 Data Source & Variables
 
-**Requirements:** Python 3.12+
+Daily meteorological records courtesy of the **Maldives Meteorological Service (MET)**, spanning 1974 through 2025.
 
-```bash
-# Create virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Launch JupyterLab
-jupyter lab
-```
-
----
-
-## 📜 Data Source
-
-Daily meteorological records sourced from the **Maldives Meteorological Service (MET)** covering five primary weather observation stations across the Maldives archipelago, spanning **1974–2025**.
-
-Variables include: atmospheric pressure (hPa), maximum/minimum/mean temperature (°C), relative humidity (%), wind direction (compass), wind speed (kts), daily rainfall (mm), sunshine hours, and cloud cover (oktas).
+**Variables included:**
+- **Atmospheric Pressure:** Station and Sea-Level Pressure ($hPa$)
+- **Temperature:** Maximum, Minimum, and Mean Dry-Bulb Air Temperature ($^\circ\text{C}$)
+- **Humidity:** Relative Humidity ($\%$)
+- **Wind Dynamics:** Prevailing Direction (16-point compass / 8 cardinal sectors) and Mean Speed ($kts$)
+- **Precipitation:** Daily 24-hour Accumulated Rainfall ($mm$)
+- **Solar & Atmosphere:** Daily Sunshine Duration ($hours$) and Cloud Cover ($oktas$)

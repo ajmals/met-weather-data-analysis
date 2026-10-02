@@ -97,7 +97,12 @@ def load_and_process_transition_matrix(csv_path="data/hulhule_nakai_mapped.csv")
     Sankey flow links, pressure drop profiles, and wind vector streamlines.
     """
     if not os.path.exists(csv_path):
-        raise FileNotFoundError(f"Dataset not found at {csv_path}")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        alt_path = os.path.join(script_dir, "..", csv_path)
+        if os.path.exists(alt_path):
+            csv_path = alt_path
+        else:
+            raise FileNotFoundError(f"Dataset not found at {csv_path} or {alt_path}")
 
     df = pd.read_csv(csv_path)
     df['parsed_date'] = pd.to_datetime(df['parsed_date'])
