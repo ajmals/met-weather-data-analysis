@@ -165,7 +165,6 @@ met-weather-analysis/
 ├── README.md                              # Main project documentation & guide
 ├── index.html                             # Root gateway (redirects to interactive dashboard)
 ├── requirements.txt                      # Clean Python dependencies
-├── mindblowing_weather_questions.md      # Advanced research hypotheses on archipelagic dynamics
 │
 ├── data/                                  # Cleaned datasets and external benchmarks
 │   ├── hulhule_cleaned_data.csv           # Central/Capital station (1974–2025, 18,628 records)
