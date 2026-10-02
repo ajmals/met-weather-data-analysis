@@ -194,7 +194,7 @@ met-weather-analysis/
 
 ## 📜 Data Source & Variables
 
-Daily meteorological records sourced from the **Maldives Meteorological Service (MET)**, spanning 1974 through 2025. Nakaiy calendar definitions from the **[Maldivian Nakaiy Calendar Dataset](https://github.com/ajmals/Maldivian_Nakaiy_Calander_Dataset)**, an independent dataset by the same author.
+Daily meteorological records sourced from the **Maldives Meteorological Service (MET)**, spanning 1974 through 2025. Nakaiy calendar definitions from the **[Maldivian Nakaiy Calendar Dataset](https://github.com/ajmals/Maldivian_Nakaiy_Calander_Dataset)**, digitised from *Hassan Ahmed Maniku (1989)*.
 
 **Variables included:**
 - **Atmospheric Pressure:** Station and Sea-Level Pressure ($hPa$)
