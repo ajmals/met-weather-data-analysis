@@ -194,7 +194,10 @@ met-weather-analysis/
 
 ## 📜 Data Source & Variables
 
-Daily meteorological records sourced from the **Maldives Meteorological Service (MET)**, spanning 1974 through 2025. Nakaiy calendar definitions from the **[Maldivian Nakaiy Calendar Dataset](https://github.com/ajmals/Maldivian_Nakaiy_Calander_Dataset)**, digitised from *Hassan Ahmed Maniku (1989)*. Sea level rise data from the **[University of Hawaii Sea Level Center (UHSLC)](https://uhslc.soest.hawaii.edu/)** — Hulhule Tide Gauge Station 1475, supplemented with IPCC Indian Ocean estimates.
+**Sources:**
+- **Meteorological Records:** [Maldives Meteorological Service (MET)](https://www.meteorology.gov.mv/) — daily station observations, 1974–2025
+- **Nakaiy Calendar:** [Maldivian Nakaiy Calendar Dataset](https://github.com/ajmals/Maldivian_Nakaiy_Calander_Dataset) — digitised from *Hassan Ahmed Maniku (1989)*
+- **Sea Level Rise:** [University of Hawaii Sea Level Center (UHSLC)](https://uhslc.soest.hawaii.edu/) — Hulhule Tide Gauge Station 1475, supplemented with IPCC Indian Ocean estimates
 
 **Variables included:**
 - **Atmospheric Pressure:** Station and Sea-Level Pressure ($hPa$)
