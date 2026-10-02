@@ -69,3 +69,11 @@ Open `monsoon_transition_matrix/index.html` in any browser or launch via local w
 python3 -m http.server 8000
 ```
 Navigate to `http://localhost:8000/monsoon_transition_matrix/` to explore interactive Sankey ribbon flow diagrams, polar wind streamline compasses, and pressure drop matrix profiles.
+
+---
+
+## 🌐 Live Demo
+
+The interactive dashboard is publicly hosted on GitHub Pages:
+
+**🔗 [https://ajmals.github.io/met-weather-data-analysis/monsoon_transition_matrix/](https://ajmals.github.io/met-weather-data-analysis/monsoon_transition_matrix/)**
