@@ -3,11 +3,13 @@ Data Processing Engine for Monsoon Shift Transition Matrix
 ===========================================================
 Processes historical meteorological observations mapped with Maldivian Nakaiy calendars,
 deriving wind directional shift transition matrices, atmospheric pressure drop gradients,
-wind streamline vector components (U, V), and rainfall intensity profiles.
+wind streamline vector components (U, V), and rainfall intensity profiles across multiple stations
+(Hulhule Central, Gan Southern, Hanimaadhoo Northern).
 """
 
 import os
 import json
+import re
 import pandas as pd
 import numpy as np
 
@@ -91,21 +93,30 @@ def compute_vector_components(speed, compass):
     return round(float(u), 3), round(float(v), 3)
 
 
-def load_and_process_transition_matrix(csv_path="data/hulhule_nakai_mapped.csv"):
-    """
-    Loads mapped dataset, computes summary per Nakaiy, transition matrices,
-    Sankey flow links, pressure drop profiles, and wind vector streamlines.
-    """
-    if not os.path.exists(csv_path):
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        alt_path = os.path.join(script_dir, "..", csv_path)
-        if os.path.exists(alt_path):
-            csv_path = alt_path
-        else:
-            raise FileNotFoundError(f"Dataset not found at {csv_path} or {alt_path}")
+def resolve_file_path(rel_path):
+    if os.path.exists(rel_path):
+        return rel_path
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    alt_path = os.path.join(script_dir, "..", rel_path)
+    if os.path.exists(alt_path):
+        return alt_path
+    raise FileNotFoundError(f"File not found: {rel_path} or {alt_path}")
 
-    df = pd.read_csv(csv_path)
-    df['parsed_date'] = pd.to_datetime(df['parsed_date'])
+
+def build_calendar_day_map():
+    mapped_csv = resolve_file_path("data/hulhule_nakai_mapped.csv")
+    df_nak = pd.read_csv(mapped_csv)
+    df_nak["dt"] = pd.to_datetime(df_nak["parsed_date"])
+    df_nak["md"] = df_nak["dt"].dt.strftime("%m-%d")
+    day_map = df_nak.groupby("md")[["Nakaiy", "Nakaiy_Index", "Monsoon"]].first().to_dict(orient="index")
+    return day_map
+
+
+def process_station_dataframe(df, station_name):
+    """
+    Processes a station DataFrame that contains 'date', 'pressure_hpa', 'rainfall_mm',
+    'mean_wind_speed_kts', 'mean_wind_direction_compass', 'Nakaiy', 'Nakaiy_Index', 'Monsoon'.
+    """
     df['clean_wind_sector'] = df['mean_wind_direction_compass'].apply(clean_wind_direction)
     df['wind_angle_deg'] = df['mean_wind_direction_compass'].apply(compass_to_angle)
 
@@ -114,9 +125,8 @@ def load_and_process_transition_matrix(csv_path="data/hulhule_nakai_mapped.csv")
     df['u_kts'] = [x[0] for x in u_v]
     df['v_kts'] = [x[1] for x in u_v]
 
-    # Calculate Nakaiy level summaries
     summary_list = []
-    baseline_pressure = df['pressure_hpa'].mean()
+    baseline_pressure = df['pressure_hpa'].dropna().mean()
 
     for item in NAKAI_DETAILS:
         idx = item['index']
@@ -126,15 +136,15 @@ def load_and_process_transition_matrix(csv_path="data/hulhule_nakai_mapped.csv")
         if len(sub) == 0:
             continue
 
-        mean_press = sub['pressure_hpa'].mean()
-        min_press = sub['pressure_hpa'].min()
-        mean_rain = sub['rainfall_mm'].mean()
-        p90_rain = sub['rainfall_mm'].quantile(0.90)
-        max_rain = sub['rainfall_mm'].max()
-        mean_wind_spd = sub['mean_wind_speed_kts'].mean()
-        max_wind_spd = sub['max_wind_speed_kts'].mean()
-        u_mean = sub['u_kts'].mean()
-        v_mean = sub['v_kts'].mean()
+        mean_press = sub['pressure_hpa'].dropna().mean()
+        min_press = sub['pressure_hpa'].dropna().min()
+        mean_rain = sub['rainfall_mm'].dropna().mean()
+        p90_rain = sub['rainfall_mm'].dropna().quantile(0.90)
+        max_rain = sub['rainfall_mm'].dropna().max()
+        mean_wind_spd = sub['mean_wind_speed_kts'].dropna().mean()
+        max_wind_spd = sub['max_wind_speed_kts'].dropna().mean() if 'max_wind_speed_kts' in sub.columns else mean_wind_spd
+        u_mean = sub['u_kts'].dropna().mean()
+        v_mean = sub['v_kts'].dropna().mean()
 
         # Dominant wind sector
         sector_counts = sub['clean_wind_sector'].value_counts()
@@ -153,16 +163,16 @@ def load_and_process_transition_matrix(csv_path="data/hulhule_nakai_mapped.csv")
             'lore': item['lore'],
             'is_transition': item['is_transition'],
             'trans_type': item['trans_type'],
-            'mean_pressure_hpa': round(float(mean_press), 2),
-            'min_pressure_hpa': round(float(min_press), 2),
-            'pressure_anomaly_hpa': round(float(mean_press - baseline_pressure), 2),
-            'mean_rain_mm': round(float(mean_rain), 2),
-            'p90_rain_mm': round(float(p90_rain), 2),
-            'max_rain_mm': round(float(max_rain), 2),
-            'mean_wind_speed_kts': round(float(mean_wind_spd), 2),
-            'max_wind_speed_kts': round(float(max_wind_spd), 2),
-            'u_mean_kts': round(float(u_mean), 2),
-            'v_mean_kts': round(float(v_mean), 2),
+            'mean_pressure_hpa': round(float(mean_press), 2) if not pd.isna(mean_press) else 1010.0,
+            'min_pressure_hpa': round(float(min_press), 2) if not pd.isna(min_press) else 1009.0,
+            'pressure_anomaly_hpa': round(float(mean_press - baseline_pressure), 2) if not pd.isna(mean_press) else 0.0,
+            'mean_rain_mm': round(float(mean_rain), 2) if not pd.isna(mean_rain) else 0.0,
+            'p90_rain_mm': round(float(p90_rain), 2) if not pd.isna(p90_rain) else 0.0,
+            'max_rain_mm': round(float(max_rain), 2) if not pd.isna(max_rain) else 0.0,
+            'mean_wind_speed_kts': round(float(mean_wind_spd), 2) if not pd.isna(mean_wind_spd) else 0.0,
+            'max_wind_speed_kts': round(float(max_wind_spd), 2) if not pd.isna(max_wind_spd) else 0.0,
+            'u_mean_kts': round(float(u_mean), 2) if not pd.isna(u_mean) else 0.0,
+            'v_mean_kts': round(float(v_mean), 2) if not pd.isna(v_mean) else 0.0,
             'dominant_sector': top_sector,
             'dominant_sector_pct': round(float(top_sector_pct), 1),
             'sector_dist_pct': sector_dist,
@@ -170,37 +180,23 @@ def load_and_process_transition_matrix(csv_path="data/hulhule_nakai_mapped.csv")
         })
 
     summary_df = pd.DataFrame(summary_list)
-    # Calculate pressure drop delta relative to previous Nakaiy
+    # Calculate pressure drop delta relative to previous Nakaiy (positive means drop)
     summary_df['pressure_drop_hpa'] = round(- summary_df['mean_pressure_hpa'].diff().fillna(0.0), 2)
 
-    # -------------------------------------------------------------
+    # Convert all records to dicts so pressure_drop_hpa is present on every item
+    all_nakaiy_records = summary_df.to_dict(orient="records")
+
     # Transition Phase 1: Assidha (Iruvai -> Hulhangu) Analysis
-    # -------------------------------------------------------------
-    # Focus window: Nakaiys 7 (Furabadhuruva) to 12 (Kethi)
     t1_nakaiys = ['Furabadhuruva', 'Fasbadhuruva', 'Reyva', 'Assidha', 'Burunu', 'Kethi']
-    t1_summary = [s for s in summary_list if s['name'] in t1_nakaiys]
+    t1_summary = [s for s in all_nakaiy_records if s['name'] in t1_nakaiys]
 
-    # -------------------------------------------------------------
     # Transition Phase 2: Halha (Hulhangu -> Iruvai) Analysis
-    # -------------------------------------------------------------
-    # Focus window: Nakaiys 24 (Hei) to 3 (Uthurahalha)
     t2_nakaiys = ['Hei', 'Viha', 'Nora', 'Dosha', 'Mula', 'Furahalha', 'Uthurahalha']
-    t2_summary = [s for s in summary_list if s['name'] in t2_nakaiys]
+    t2_summary = [s for s in all_nakaiy_records if s['name'] in t2_nakaiys]
 
-    # -------------------------------------------------------------
     # Sankey Flow Link Generation
-    # -------------------------------------------------------------
-    # Nodes:
-    # 0: Pre-Assidha (Late Iruvai: Hiyaviha-Reyva)
-    # 1: Assidha Onset (Nakaiy 10)
-    # 2: Post-Assidha (Est. Hulhangu: Burunu-Roanu)
-    # 3: Pre-Halha (Late Hulhangu: Viha-Dosha)
-    # 4: Halha Onset (Mula-Furahalha-Uthurahalha)
-    # 5: Post-Halha (Est. Iruvai: Huvan-Dhinasha)
-    # Plus Wind Sector Nodes (NE, E, SE, S, SW, W, NW, N, VRB)
-
     sectors = ['NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N', 'VRB/CALM']
-    
+
     # Sankey Links for Assidha Transition
     sankey_links_t1 = []
     t1_pre = df[df['Nakaiy'].isin(['Hiyaviha', 'Furabadhuruva', 'Fasbadhuruva', 'Reyva'])]
@@ -254,12 +250,13 @@ def load_and_process_transition_matrix(csv_path="data/hulhule_nakai_mapped.csv")
     burunu_row = summary_df[summary_df['name'] == 'Burunu'].iloc[0].to_dict()
     mula_row = summary_df[summary_df['name'] == 'Mula'].iloc[0].to_dict()
     furahalha_row = summary_df[summary_df['name'] == 'Furahalha'].iloc[0].to_dict()
+    huvan_press = summary_df[summary_df['name'] == 'Huvan']['mean_pressure_hpa'].values[0]
 
     key_stats = {
         "assidha_pressure_hpa": assidha_row['mean_pressure_hpa'],
-        "assidha_pressure_drop_from_iruvai": round(float(summary_df[summary_df['name'] == 'Huvan']['mean_pressure_hpa'].values[0] - assidha_row['mean_pressure_hpa']), 2),
+        "assidha_pressure_drop_from_iruvai": round(float(huvan_press - assidha_row['mean_pressure_hpa']), 2),
         "burunu_min_pressure_hpa": burunu_row['mean_pressure_hpa'],
-        "max_transition_pressure_drop_hpa": round(float(summary_df[summary_df['name'] == 'Huvan']['mean_pressure_hpa'].values[0] - burunu_row['mean_pressure_hpa']), 2),
+        "max_transition_pressure_drop_hpa": round(float(huvan_press - burunu_row['mean_pressure_hpa']), 2),
         "assidha_rain_p90_mm": assidha_row['p90_rain_mm'],
         "burunu_rain_p90_mm": burunu_row['p90_rain_mm'],
         "halha_mula_rain_p90_mm": mula_row['p90_rain_mm'],
@@ -268,8 +265,9 @@ def load_and_process_transition_matrix(csv_path="data/hulhule_nakai_mapped.csv")
         "hulhangu_westerly_shift_pct": round(float(burunu_row['sector_dist_pct']['W'] + burunu_row['sector_dist_pct']['NW'] + burunu_row['sector_dist_pct']['SW']), 1)
     }
 
-    result = {
-        "nakaiy_summary": summary_df.to_dict(orient="records"),
+    return {
+        "station_name": station_name,
+        "nakaiy_summary": all_nakaiy_records,
         "transition_1_assidha": t1_summary,
         "transition_2_halha": t2_summary,
         "sankey_t1": sankey_links_t1,
@@ -277,20 +275,61 @@ def load_and_process_transition_matrix(csv_path="data/hulhule_nakai_mapped.csv")
         "key_stats": key_stats
     }
 
-    return result
+
+def load_and_process_transition_matrix():
+    day_map = build_calendar_day_map()
+
+    stations_cfg = {
+        "hulhule": {
+            "file": "data/hulhule_nakai_mapped.csv",
+            "name": "Hulhule International Airport (Central)",
+            "is_mapped": True
+        },
+        "gan": {
+            "file": "data/gan_cleaned_data.csv",
+            "name": "Gan International Airport (Southern)",
+            "is_mapped": False
+        },
+        "hanimaadhoo": {
+            "file": "data/hanimaadhoo_cleaned_data.csv",
+            "name": "Hanimaadhoo Climate Station (Northern)",
+            "is_mapped": False
+        }
+    }
+
+    station_results = {}
+
+    for key, cfg in stations_cfg.items():
+        file_path = resolve_file_path(cfg["file"])
+        df = pd.read_csv(file_path)
+        if not cfg["is_mapped"]:
+            df["parsed_date"] = pd.to_datetime(df["date"])
+            df["md"] = df["parsed_date"].dt.strftime("%m-%d")
+            df["Nakaiy"] = df["md"].map(lambda x: day_map[x]["Nakaiy"])
+            df["Nakaiy_Index"] = df["md"].map(lambda x: day_map[x]["Nakaiy_Index"])
+            df["Monsoon"] = df["md"].map(lambda x: day_map[x]["Monsoon"])
+        else:
+            df["parsed_date"] = pd.to_datetime(df["parsed_date"])
+
+        station_results[key] = process_station_dataframe(df, cfg["name"])
+
+    # Base payload on Hulhule for backwards compatibility, with multi-station dictionary
+    base = dict(station_results["hulhule"])
+    base["stations"] = station_results
+    return base
 
 
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     output_json = os.path.join(script_dir, "monsoon_transition_data.json")
 
-    import re
     data = load_and_process_transition_matrix()
     json_str = json.dumps(data, indent=2)
     json_str = re.sub(r':\s*NaN\b', ': null', json_str)
     with open(output_json, "w") as f:
         f.write(json_str)
 
-    print(f"Successfully processed monsoon transition matrix data!")
+    print("Successfully processed monsoon transition matrix data for all 3 stations!")
+    print(f"Stations included: {list(data['stations'].keys())}")
     print(f"JSON export written to: {output_json}")
-    print(f"Key transition stats: {data['key_stats']}")
+    print(f"Hulhule Key stats: {data['key_stats']}")

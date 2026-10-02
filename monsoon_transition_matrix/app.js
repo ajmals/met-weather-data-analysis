@@ -1,11 +1,12 @@
 /**
  * Monsoon Shift Transition Matrix Dashboard Controller
  * Handles dynamic rendering of interactive Sankey diagrams, pressure drop matrix profiles,
- * streamline wind vector compass charts, and dataset tab filtering.
+ * streamline wind vector compass charts, multi-station switching, and dataset tab filtering.
  */
 
 let transitionData = null;
 let currentTab = 'all';
+let currentStation = 'hulhule';
 
 // Theme Colors
 const COLOR_IRUVAI = '#F59E0B';
@@ -41,17 +42,29 @@ async function fetchData() {
   }
 }
 
+function getActiveData() {
+  if (transitionData && transitionData.stations && transitionData.stations[currentStation]) {
+    return transitionData.stations[currentStation];
+  }
+  return transitionData;
+}
+
 function switchTab(tabKey) {
   currentTab = tabKey;
   
   // Update button active state
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.getElementById(`tab-${tabKey}`).classList.add('active');
+  const targetBtn = document.getElementById(`tab-${tabKey}`);
+  if (targetBtn) targetBtn.classList.add('active');
 
   renderDashboard();
 }
 
 function onStationChange() {
+  const select = document.getElementById('station-select');
+  if (select) {
+    currentStation = select.value;
+  }
   renderDashboard();
 }
 
@@ -66,33 +79,45 @@ function renderDashboard() {
 }
 
 function renderKeyStats() {
-  const stats = transitionData.key_stats;
-  document.getElementById('stat-assidha-press').textContent = `-${stats.assidha_pressure_drop_from_iruvai} hPa`;
-  document.getElementById('stat-halha-shift').textContent = `${stats.iruvai_easterly_shift_pct}%`;
-  document.getElementById('stat-peak-rain').textContent = `${stats.halha_mula_rain_p90_mm} mm/d`;
-  document.getElementById('stat-hulhangu-shift').textContent = `${stats.hulhangu_westerly_shift_pct}%`;
+  const activeData = getActiveData();
+  const stats = activeData.key_stats;
+  if (!stats) return;
+
+  const assidhaDropEl = document.getElementById('stat-assidha-press');
+  const halhaShiftEl = document.getElementById('stat-halha-shift');
+  const peakRainEl = document.getElementById('stat-peak-rain');
+  const hulhanguShiftEl = document.getElementById('stat-hulhangu-shift');
+
+  if (assidhaDropEl) assidhaDropEl.textContent = `-${stats.assidha_pressure_drop_from_iruvai} hPa`;
+  if (halhaShiftEl) halhaShiftEl.textContent = `${stats.iruvai_easterly_shift_pct}%`;
+  if (peakRainEl) peakRainEl.textContent = `${stats.halha_mula_rain_p90_mm} mm/d`;
+  if (hulhanguShiftEl) hulhanguShiftEl.textContent = `${stats.hulhangu_westerly_shift_pct}%`;
 }
 
 // ------------------------------------------------------------------
 // 1. Interactive Sankey Ribbon Diagram
 // ------------------------------------------------------------------
 function renderSankeyChart() {
+  const activeData = getActiveData();
   const isAssidha = currentTab === 'assidha';
   const isHalha = currentTab === 'halha';
   
-  let sankeyLinks = transitionData.sankey_t1;
-  let title = "Assidha Transition Sankey Flow (Iruvai -> Hulhangu Wind Reversal)";
+  let sankeyLinks = activeData.sankey_t1 || [];
+  let title = `Assidha Transition Sankey Flow (Iruvai -> Hulhangu Wind Reversal)`;
   
   if (isHalha) {
-    sankeyLinks = transitionData.sankey_t2;
-    title = "Halha Transition Sankey Flow (Hulhangu -> Iruvai Easterly Rebound)";
+    sankeyLinks = activeData.sankey_t2 || [];
+    title = `Halha Transition Sankey Flow (Hulhangu -> Iruvai Easterly Rebound)`;
   } else if (currentTab === 'all') {
-    // Combine both transitions for overall annual flow
-    sankeyLinks = [...transitionData.sankey_t1, ...transitionData.sankey_t2];
-    title = "Annual Monsoon Wind Direction Sankey Ribbon Flow";
+    sankeyLinks = [...(activeData.sankey_t1 || []), ...(activeData.sankey_t2 || [])];
+    title = `Annual Monsoon Wind Direction Sankey Ribbon Flow`;
   }
 
-  document.getElementById('sankey-title').textContent = title;
+  const titleEl = document.getElementById('sankey-title');
+  if (titleEl) {
+    const stationSuffix = activeData.station_name ? ` — ${activeData.station_name}` : '';
+    titleEl.textContent = `${title}${stationSuffix}`;
+  }
 
   // Build unique node list
   const nodeMap = new Map();
@@ -153,12 +178,13 @@ function renderSankeyChart() {
 // 2. Atmospheric Pressure Drop & Rainfall Profile Chart
 // ------------------------------------------------------------------
 function renderPressureProfileChart() {
-  let summary = transitionData.nakaiy_summary;
+  const activeData = getActiveData();
+  let summary = activeData.nakaiy_summary || [];
 
   if (currentTab === 'assidha') {
-    summary = transitionData.transition_1_assidha;
+    summary = activeData.transition_1_assidha || [];
   } else if (currentTab === 'halha') {
-    summary = transitionData.transition_2_halha;
+    summary = activeData.transition_2_halha || [];
   }
 
   const xNames = summary.map(s => `${s.index}. ${s.name}`);
@@ -226,23 +252,29 @@ function renderPressureProfileChart() {
 }
 
 // ------------------------------------------------------------------
-// 3. Radial Wind Streamline Vector Compass Map
+// 3. Radial Wind Streamline Vector Compass Map (Tab-filtered)
 // ------------------------------------------------------------------
 function renderCompassChart() {
-  const summary = transitionData.nakaiy_summary;
+  const activeData = getActiveData();
+  let summary = activeData.nakaiy_summary || [];
+
+  if (currentTab === 'assidha') {
+    summary = activeData.transition_1_assidha || [];
+  } else if (currentTab === 'halha') {
+    summary = activeData.transition_2_halha || [];
+  }
 
   const rValues = summary.map(s => s.mean_wind_speed_kts);
-  const thetaValues = summary.map(s => {
-    // Map dominant sector to approximate angle
-    const secAngles = {'N': 0, 'NE': 45, 'E': 90, 'SE': 135, 'S': 180, 'SW': 225, 'W': 270, 'NW': 315};
-    return secAngles[s.dominant_sector] || 0;
-  });
+  const secAngles = {'N': 0, 'NE': 45, 'E': 90, 'SE': 135, 'S': 180, 'SW': 225, 'W': 270, 'NW': 315};
+  const thetaValues = summary.map(s => secAngles[s.dominant_sector] || 0);
   const textLabels = summary.map(s => `${s.name} (${s.dominant_sector})`);
   const colors = summary.map(s => {
     if (s.name === 'Assidha' || s.name === 'Burunu') return COLOR_ASSIDHA;
     if (s.name === 'Mula' || s.name === 'Furahalha') return COLOR_HALHA;
     return s.monsoon === 'Iruvai' ? COLOR_IRUVAI : COLOR_HULHANGU;
   });
+
+  const maxSpd = Math.max(...rValues, 12);
 
   const data = [{
     type: 'scatterpolar',
@@ -266,7 +298,7 @@ function renderCompassChart() {
       bgcolor: 'transparent',
       radialaxis: {
         visible: true,
-        range: [0, 15],
+        range: [0, Math.ceil(maxSpd + 2)],
         title: 'Wind Speed (kts)',
         gridcolor: '#1F2937'
       },
@@ -283,20 +315,29 @@ function renderCompassChart() {
 }
 
 // ------------------------------------------------------------------
-// 4. Data Table Population
+// 4. Data Table Population (Fixed Pressure Drop)
 // ------------------------------------------------------------------
 function renderTable() {
   const tbody = document.getElementById('table-body');
+  if (!tbody) return;
   tbody.innerHTML = '';
 
-  let list = transitionData.nakaiy_summary;
-  if (currentTab === 'assidha') list = transitionData.transition_1_assidha;
-  if (currentTab === 'halha') list = transitionData.transition_2_halha;
+  const activeData = getActiveData();
+  let list = activeData.nakaiy_summary || [];
+  if (currentTab === 'assidha') list = activeData.transition_1_assidha || [];
+  if (currentTab === 'halha') list = activeData.transition_2_halha || [];
 
   list.forEach(row => {
     const tr = document.createElement('tr');
     if (row.name === 'Assidha' || row.name === 'Burunu') tr.classList.add('highlight-assidha');
     if (row.name === 'Mula' || row.name === 'Furahalha' || row.name === 'Uthurahalha') tr.classList.add('highlight-halha');
+
+    // Format pressure drop nicely
+    let dropDisplay = '-';
+    if (row.pressure_drop_hpa !== undefined && row.pressure_drop_hpa !== null) {
+      const val = Number(row.pressure_drop_hpa);
+      dropDisplay = val > 0 ? `+${val.toFixed(2)} hPa` : `${val.toFixed(2)} hPa`;
+    }
 
     tr.innerHTML = `
       <td>${row.index}</td>
@@ -304,7 +345,7 @@ function renderTable() {
       <td><span class="badge ${row.monsoon.toLowerCase()}">${row.monsoon}</span></td>
       <td>${row.dates}</td>
       <td>${row.mean_pressure_hpa} hPa</td>
-      <td>${row.pressure_drop_hpa !== undefined ? row.pressure_drop_hpa : '-'}</td>
+      <td><strong>${dropDisplay}</strong></td>
       <td>${row.mean_rain_mm} mm</td>
       <td><strong>${row.p90_rain_mm} mm</strong></td>
       <td>${row.mean_wind_speed_kts} kts</td>

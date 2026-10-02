@@ -9,9 +9,8 @@
   <!-- Styling -->
   <link rel="stylesheet" href="style.css">
   
-  <!-- Plotly & D3 CDN -->
+  <!-- Plotly CDN -->
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 </head>
 <body>
 
@@ -25,7 +24,7 @@
     </div>
     <h1>Monsoon Shift Transition Matrix</h1>
     <p class="subtitle">
-      Analyzing historical prevailing wind reversals, atmospheric pressure drops ($\Delta P$), and rainfall surges across the 27 Maldivian Nakaiys.
+      Analyzing historical prevailing wind reversals, atmospheric pressure drops (&Delta;P), and rainfall surges across the 27 Maldivian Nakaiys.
     </p>
   </header>
 
@@ -53,12 +52,11 @@
     <small style="color:#9ca3af;">Make sure <code>monsoon_transition_data.json</code> is in the same folder as this page and is served via HTTP (not file://).</small>
   </div>
 
-
   <section class="metrics-grid">
     <div class="metric-card assidha-card">
       <div class="card-title">Assidha Onset Pressure Drop</div>
-      <div class="card-value" id="stat-assidha-press">-2.03 hPa</div>
-      <div class="card-sub">Drop from peak Iruvai to Burunu onset</div>
+      <div class="card-value" id="stat-assidha-press">-1.51 hPa</div>
+      <div class="card-sub">Drop from peak Iruvai to Assidha onset</div>
     </div>
 
     <div class="metric-card halha-card">
@@ -69,14 +67,14 @@
 
     <div class="metric-card rain-card">
       <div class="card-title">Peak Transition Rainfall</div>
-      <div class="card-value" id="stat-peak-rain">28.31 mm/d</div>
+      <div class="card-value" id="stat-peak-rain">27.44 mm/d</div>
       <div class="card-sub">90th percentile surge during Roanu/Mula</div>
     </div>
 
     <div class="metric-card pressure-card">
       <div class="card-title">Hulhangu Westerly Dominance</div>
       <div class="card-value" id="stat-hulhangu-shift">83.6%</div>
-      <div class="card-sub">Westerly gust sector in Kethi/Roanu</div>
+      <div class="card-sub">Westerly gust sector in Burunu/Roanu</div>
     </div>
   </section>
 
@@ -113,7 +111,7 @@
         <div class="chart-header">
           <div>
             <div class="chart-title">Radial Wind Streamline Vector Compass</div>
-            <div class="chart-subtitle">Polar vector field ($U, V$ components) and prevailing direction shift</div>
+            <div class="chart-subtitle">Polar vector field (U, V components) and prevailing direction shift</div>
           </div>
         </div>
         <div id="compass-chart" class="chart-container"></div>
@@ -138,7 +136,7 @@
               <th>Monsoon Phase</th>
               <th>Dates</th>
               <th>Mean Pressure (hPa)</th>
-              <th>$\Delta P$ Drop (hPa)</th>
+              <th>&Delta;P Drop (hPa)</th>
               <th>Mean Rain (mm)</th>
               <th>P90 Rain (mm)</th>
               <th>Wind Speed (kts)</th>
@@ -157,7 +155,7 @@
 
   <!-- Footer -->
   <footer>
-    <p>Maldives Meteorological Service Data Analysis &bull; Monsoon Shift Transition Matrix &bull; Built with D3.js & Plotly.js</p>
+    <p>Maldives Meteorological Service Data Analysis &bull; Monsoon Shift Transition Matrix &bull; Built with Plotly.js</p>
   </footer>
 
   <!-- Script Logic -->
