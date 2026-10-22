@@ -83,12 +83,18 @@ Cleaned MET Station Records (1975–2026)
           │        • Sea level rise integration
           │        • Nakaiy calendar mapping (from Maldivian_Nakaiy_Calander_Dataset)
           │
-          └──► [3] maldives_monsoon_transitions.ipynb
-                   • Atmospheric pressure drops (ΔP) & barometric plunge
-                   • Wind vector streamline decomposition (U, V) & directional reversal
-                   • Extreme rainfall surges (P90) across 27 Nakaiys
-                   • Interactive Plotly Sankey diagram & polar vector compass
-                   • Multi-station latitudinal gradient & folklore testing
+          ├──► [3] maldives_monsoon_transitions.ipynb
+          │        • Atmospheric pressure drops (ΔP) & barometric plunge
+          │        • Wind vector streamline decomposition (U, V) & directional reversal
+          │        • Extreme rainfall surges (P90) across 27 Nakaiys
+          │        • Interactive Plotly Sankey diagram & polar vector compass
+          │        • Multi-station latitudinal gradient & folklore testing
+          │
+          └──► [4] maldives_weather_factcheck.ipynb & MALDIVES_WEATHER_FACTCHECK_REPORT.md
+                   • Social Media & Viral Claim Fact-Check Desk
+                   • Fact-Check #001: October Malé Rainfall & 100mm Spells (Mohamed Nasheed)
+                   • Fact-Check #002: Does South have more rain than North? (Fasy Ibrahim)
+                   • Modular template for appending future public inquiries
 ```
 
 ---
@@ -165,12 +171,33 @@ A comprehensive dedicated meteorological analysis examining atmospheric pressure
 
 ---
 
+### 4. [`maldives_weather_factcheck.ipynb`](./maldives_weather_factcheck.ipynb) & [`MALDIVES_WEATHER_FACTCHECK_REPORT.md`](./MALDIVES_WEATHER_FACTCHECK_REPORT.md) — Weather Fact-Check & FAQ Desk
+A dedicated, living desk and empirical verification notebook testing viral social media posts and community questions against 50+ years of official MMS records.
+- 🔍 **Fact-Check #001 (Mohamed Nasheed):** Evaluates claims regarding October normal rainfall in Malé, rainy days, consecutive 25–35 mm days, 100 mm 5-day spells, and climate change attribution.
+  - *Verdict:* Baseline math is accurate (mean 237.7 mm; WMO normal 203.5–245.4 mm; ~15 rain days), but 100 mm in 5 days is routine (experienced in 54.9% of all Octobers).
+- 🔍 **Fact-Check #002 (Fasy Ibrahim):** Answers whether the South has more rainfall than the North across an 800 km transect.
+  - *Verdict:* Confirmed (+26.1% more rain in the South; ~2,216 mm/yr vs ~1,758 mm/yr). Crucially discovers that SW monsoon rainfall is nearly identical nationwide, and the disparity is generated entirely during the NE monsoon (*Iruvai*) because the South avoids the continental dry season.
+- 🔍 **Fact-Check #003 (Community Lore / Anonymous):** Tests whether rainfall increases or weather changes during Nakaiy transitions.
+  - *Verdict:* Busted for routine transitions (5.47 vs 5.51 mm/day, $p = 0.81$); Confirmed for macro monsoon shifts (*Assidha/Burunu* and *Dosha/Mula*) where barometric pressure drops by 2.0 hPa, winds reverse 180°, and rain surges +24% to +64%.
+- 🛠️ **Expandable Architecture:** Features standardized Verdict Cards and a modular template to easily append new questions.
+
+---
+
 ## 🗂️ Project Structure
 
 ```
 met-weather-analysis/
 ├── README.md                              # Main project documentation & guide
+├── MALDIVES_WEATHER_FACTCHECK_REPORT.md   # [Living Report] Social media fact-check desk
 ├── requirements.txt                      # Clean Python dependencies
+│
+├── assets/
+│   └── factcheck/                         # Tweet screenshots & verification plots
+│       ├── tweet_mohamed_nasheed_october_rainfall.png
+│       ├── tweet_fasy_south_north_rainfall.png
+│       ├── october_male_rainfall_distribution.png
+│       ├── maldives_north_vs_south_rainfall.png
+│       └── nakaiy_transitions_rainfall_weather_change.png
 │
 ├── scripts/
 │   └── sync_data.py                       # Sync & check updates from maldives-met-weather-dataset
@@ -191,11 +218,13 @@ met-weather-analysis/
 │       └── monsoon_transition_data.json   # Multi-station synoptic transition benchmark dataset
 │
 ├── archive/                               # Archived development notebooks
-│   └── maldives_weather_data_quality.ipynb
+│   ├── maldives_weather_data_quality.ipynb
+│   └── mindblowing_weather_questions.md
 │
 ├── maldives_weather_exploration.ipynb    # [Notebook 1] Exploration, trends, DTR & SARIMAX
 ├── maldives_climate_deepdive.ipynb       # [Notebook 2] 5 research hypotheses & Nakaiy mapping
-└── maldives_monsoon_transitions.ipynb     # [Notebook 3] Barometric plunge, wind vector reversals & Nakaiy transitions
+├── maldives_monsoon_transitions.ipynb     # [Notebook 3] Barometric plunge, wind vector reversals & Nakaiy transitions
+└── maldives_weather_factcheck.ipynb       # [Notebook 4] Social media & public questions fact-check desk
 ```
 
 ---
