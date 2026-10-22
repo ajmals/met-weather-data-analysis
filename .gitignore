@@ -5,3 +5,7 @@ __pycache__/
 .DS_Store
 archive/
 scratch/
+
+# IDE & Workspace
+*.code-workspace
+.vscode/
