@@ -94,6 +94,7 @@ Cleaned MET Station Records (1975–2026)
                    • Social Media & Viral Claim Fact-Check Desk
                    • Fact-Check #001: October Malé Rainfall & 100mm Spells (Mohamed Nasheed)
                    • Fact-Check #002: Does South have more rain than North? (Fasy Ibrahim)
+                   • Fact-Check #003: Nakaiy Transitions & Rain Changes (Folklore Testing)
                    • Modular template for appending future public inquiries
 ```
 

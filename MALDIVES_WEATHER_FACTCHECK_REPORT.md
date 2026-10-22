@@ -15,15 +15,17 @@ Each entry is evaluated against long-term historical records from the five prima
 * **Kaadedhdhoo** (Southern Atolls: 0.49° N)
 * **Gan, Addu** (Equatorial / Far Southern Atolls: 0.69° S)
 
+<a id="directory"></a>
 ### Quick Reference Directory of Inquiries
 | ID | Topic / Inquiry | Source / Author | Verdict | Key Finding |
 | :---: | :--- | :--- | :---: | :--- |
-| **#001** | October Rainfall in Malé, 100 mm Spell & Climate Change | Mohamed Nasheed ([@MohamedNasheed](https://x.com/MohamedNasheed/status/2113292027307929601)) | 🟡 **Mostly Accurate Math, Misleading Framing** | Baseline numbers and math match WMO normals, but a 100 mm 5-day spell is routine (occurs in 55% of all Octobers). |
-| **#002** | "Does the South have more rainfall than the North?" | Fasy Ibrahim ([@fasyibrahim](https://x.com/fasyibrahim/status/2105135781140636077)) | 🟢 **CONFIRMED: YES (+26% More in South)** | South averages ~2,216 mm/yr vs ~1,758 mm/yr in North; difference is driven almost entirely by the Northeast Monsoon (*Iruvai*). |
-| **#003** | "Is there any change in rain or weather during Nakaiy transitions?" | Community Inquiry / Weather Lore (*Anonymous*) | 🔴 **Busted for Routine Changes**<br>🟢 **Confirmed for Macro Monsoon Shifts** | Boundary days (±2d) have identical rainfall (5.47 vs 5.51 mm, p=0.81). However, seasonal onset Nakaiys (*Assidha/Burunu/Mula*) trigger dramatic barometric drops, 180° wind reversals, and +24% to +64% rainfall surges. |
+| [**#001**](#fact-check-001) | [October Rainfall in Malé, 100 mm Spell & Climate Change](#fact-check-001) | Mohamed Nasheed ([@MohamedNasheed](https://x.com/MohamedNasheed/status/2113292027307929601)) | 🟡 **Mostly Accurate Math, Misleading Framing** | Baseline numbers and math match WMO normals, but a 100 mm 5-day spell is routine (occurs in 55% of all Octobers). |
+| [**#002**](#fact-check-002) | ["Does the South have more rainfall than the North?"](#fact-check-002) | Fasy Ibrahim ([@fasyibrahim](https://x.com/fasyibrahim/status/2105135781140636077)) | 🟢 **CONFIRMED: YES (+26% More in South)** | South averages ~2,216 mm/yr vs ~1,758 mm/yr in North; difference is driven almost entirely by the Northeast Monsoon (*Iruvai*). |
+| [**#003**](#fact-check-003) | ["Is there any change in rain or weather during Nakaiy transitions?"](#fact-check-003) | Community Inquiry / Weather Lore (*Anonymous*) | 🔴 **Busted for Routine Changes**<br>🟢 **Confirmed for Macro Monsoon Shifts** | Boundary days (±2d) have identical rainfall (5.47 vs 5.51 mm, p=0.81). However, seasonal onset Nakaiys (*Assidha/Burunu/Mula*) trigger dramatic barometric drops, 180° wind reversals, and +24% to +64% rainfall surges. |
 
 ---
 
+<a id="fact-check-001"></a>
 ## 🔍 Fact-Check #001: October Rainfall in Malé & 5-Day Rainfall Spell
 
 * **Claimant:** Mohamed Nasheed (Former President of the Maldives)
@@ -101,8 +103,11 @@ Each entry is evaluated against long-term historical records from the five prima
 | **100 mm in 5 Days** | Half month's normal in < week | Happens in 54.9% of all Octobers (28/51 years) | 🟡 **Routine Pattern** |
 | **Climate Attribution** | Attributing 5-day rain to CC | Clausius-Clapeyron is true, but event is routine monsoon pulse | 🔵 **Misapplied Context** |
 
+[↑ Back to Directory of Inquiries](#directory)
+
 ---
 
+<a id="fact-check-002"></a>
 ## 🔍 Fact-Check #002: Does the South Have More Rainfall Than the North?
 
 * **Author:** Fasy Ibrahim ([@fasyibrahim](https://x.com/fasyibrahim/status/2105135781140636077))
@@ -184,8 +189,11 @@ A month-by-month decomposition reveals a fascinating climatological reality:
 🟢 **CONFIRMED: YES, THE SOUTH RECEIVES SIGNIFICANTLY MORE RAINFALL THAN THE NORTH.**  
 On average, the Southern atolls receive **~430 to 460 mm (+25% to +26%) more rain per year** than the Northern atolls. Crucially, this difference does not occur during the rainy Southwest Monsoon, but is created entirely because the South avoids the sharp dry season that impacts the North from January to April.
 
+[↑ Back to Directory of Inquiries](#directory)
+
 ---
 
+<a id="fact-check-003"></a>
 ## 🔍 Fact-Check #003: Do Nakaiy Transitions Trigger Higher Rainfall or Weather Changes?
 
 * **Source / Inquirer:** Community Question & Maldivian Seafaring Lore (*Anonymous*)
@@ -276,3 +284,5 @@ When we statistically compare **Monsoon Onset Nakaiys vs. Non-Onset Periods**, t
 | **Q1: Routine Nakaiy Changes** | It rains whenever a Nakaiy changes | 5.47 mm/day (transition) vs 5.51 mm/day (mid-period), $p=0.81$ | 🔴 **Busted (Myth)** |
 | **Q2: Weather Contrast Across Nakaiys** | Weather changes across Nakaiys | Driest is 1.09 mm (11% rain prob); wettest is 8.28 mm (52% rain prob) | 🟢 **Confirmed Reality** |
 | **Q2: Macro Monsoon Shift Transitions** | Stormy weather during monsoon shifts | Pressure drops by $-2.0\text{ hPa}$, winds reverse 180°, rain surges +24% to +64% | 🟢 **Confirmed Reality** |
+
+[↑ Back to Directory of Inquiries](#directory)
