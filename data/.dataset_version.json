@@ -1,0 +1,32 @@
+{
+  "repo": "https://github.com/ajmals/maldives-met-weather-dataset",
+  "last_synced_commit": "6e53e7ab4a9bcd115d6b0146c9fdf951edbe7bcb",
+  "last_synced_date": "2026-10-22T22:36:10.159456",
+  "last_checked_date": "2026-10-22T23:04:56.267220",
+  "files": {
+    "gan.csv": {
+      "rows": 17805,
+      "sha256": "1b6ae60eaa6b28e113cdbccfe79b7b0130aa88f7840691c2f8ee9cf835e6a4a2"
+    },
+    "hanimaadhoo.csv": {
+      "rows": 12906,
+      "sha256": "9eac54b7ee97a07c01a7ba75ff400195e5a528f53fe4f3393c059337888bd4a3"
+    },
+    "hulhule.csv": {
+      "rows": 18901,
+      "sha256": "f85c45af431e821b93306a4b77bd0bbb3ef078145a142cd603fcdd107b766191"
+    },
+    "kaadedhdhoo.csv": {
+      "rows": 11961,
+      "sha256": "2afad5e1a2d623e92bca44deaac0b5d9da6038c71f4381dcb7658fd114ef73c7"
+    },
+    "kadhdhoo.csv": {
+      "rows": 13422,
+      "sha256": "2d7382ee675e4bb2705f94c3daf2139c9bf905690724aa68e1368b9bd133913c"
+    },
+    "maldives_national_weather_daily.csv": {
+      "rows": 74995,
+      "sha256": "036d71df13909a19e3ceeb54bae8a2ce5be67d011339d0ba67826785d32a562d"
+    }
+  }
+}
